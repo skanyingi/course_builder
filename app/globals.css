@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-ink-50 text-ink-800 antialiased;
+    font-family: var(--font-sans);
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+           text-sm font-semibold transition
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700
+           active:bg-brand-800 disabled:hover:bg-brand-600;
+  }
+
+  .btn-secondary {
+    @apply btn border border-ink-300 bg-white text-ink-700
+           hover:border-brand-400 hover:text-brand-700;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-ink-300 bg-white px-3 py-2 text-sm
+           text-ink-900 shadow-sm transition
+           placeholder:text-ink-400
+           focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink-700;
+  }
+
+  .card {
+    @apply rounded-xl border border-ink-200 bg-white shadow-sm;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs
+           font-medium capitalize;
+  }
+}
+
+/* --- Markdown rendering (no external MD library) --- */
+.md {
+  @apply text-[0.95rem] leading-7 text-ink-700;
+}
+.md > * + * {
+  @apply mt-4;
+}
+.md h1 {
+  @apply mt-0 text-2xl font-bold tracking-tight text-ink-900 sm:text-3xl;
+}
+.md h2 {
+  @apply border-b border-ink-200 pb-2 text-xl font-semibold text-ink-900;
+}
+.md h3 {
+  @apply text-lg font-semibold text-ink-900;
+}
+.md h4 {
+  @apply text-base font-semibold text-ink-900;
+}
+.md p {
+  @apply text-ink-700;
+}
+.md ul {
+  @apply list-disc space-y-1.5 pl-5 marker:text-brand-400;
+}
+.md ol {
+  @apply list-decimal space-y-1.5 pl-5 marker:text-brand-400;
+}
+.md li > ul,
+.md li > ol {
+  @apply mt-1.5;
+}
+.md strong {
+  @apply font-semibold text-ink-900;
+}
+.md a {
+  @apply font-medium text-brand-700 underline underline-offset-2
+         hover:text-brand-800;
+}
+.md code {
+  @apply rounded bg-ink-100 px-1.5 py-0.5 font-mono text-[0.85em]
+         text-brand-800;
+}
+.md pre {
+  @apply overflow-x-auto rounded-lg bg-ink-900 p-4 text-sm text-ink-100;
+}
+.md pre code {
+  @apply bg-transparent p-0 text-inherit;
+}
+.md blockquote {
+  @apply border-l-4 border-brand-300 bg-brand-50/60 py-2 pl-4 pr-3 italic text-ink-600;
+}
+.md hr {
+  @apply border-ink-200;
+}
+.md table {
+  @apply w-full border-collapse overflow-hidden rounded-lg text-sm;
+}
+.md th {
+  @apply border border-ink-200 bg-ink-100 px-3 py-2 text-left font-semibold text-ink-800;
+}
+.md td {
+  @apply border border-ink-200 px-3 py-2;
+}

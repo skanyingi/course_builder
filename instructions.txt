@@ -1,0 +1,58 @@
+Build a full-stack AI Course Builder web application using Next.js (App Router, TypeScript).
+
+## Core Concept
+Users enter a topic and skill level, and the app generates a structured course outline (modules, lessons, objectives, assessments) using an AI model accessed via OpenRouter. Users can save generated courses, view them later, and expand individual lessons into full content.
+
+## Tech Stack
+- Next.js 14+ (App Router, TypeScript)
+- Tailwind CSS for styling
+- Prisma ORM with PostgreSQL (Neon-compatible connection string)
+- NextAuth.js for authentication (email/password or GitHub OAuth)
+- OpenRouter API for AI generation (NOT OpenAI directly — use OpenRouter's OpenAI-compatible endpoint)
+- Vercel AI SDK (`ai` package) for streaming responses to the UI
+
+## Features to build
+
+1. **Landing page** — simple hero explaining the tool, a "Get Started" CTA.
+
+2. **Course generation page**
+   - Form: topic (text input), skill level (dropdown: beginner/intermediate/advanced), optional focus/goals (textarea).
+   - On submit, stream the AI-generated course outline into the UI token-by-token (use Vercel AI SDK's `useChat` or `useCompletion` hook).
+   - Show a loading state while generating.
+
+3. **API route** (`app/api/generate-course/route.ts`)
+   - Accepts topic, skillLevel, goals.
+   - Calls OpenRouter's chat completions endpoint (`https://openrouter.ai/api/v1/chat/completions`) with streaming enabled.
+   - Use model `anthropic/claude-sonnet-4.5` as the default, but make the model configurable via an environment variable.
+   - Use this system prompt for generation:
+
+     "You are an expert curriculum designer and instructional content creator. Generate a structured course with: Course Title, Course Description (2-3 sentences), Target Audience & Prerequisites, 3-6 Learning Objectives (measurable, action-verb based), a Module Breakdown (4-8 modules, each with a title, summary, 3-6 lesson topics, and estimated time), and a Suggested Assessment per module. Sequence content simple to complex, prefer applied/project-based objectives, calibrate to the given skill level, and output clean Markdown with headers and bullets — no filler text."
+
+4. **Database schema (Prisma)**
+   - `User` (id, email, name, hashed password or OAuth fields)
+   - `Course` (id, userId, title, description, skillLevel, topic, createdAt)
+   - `Module` (id, courseId, title, summary, order, estimatedTime)
+   - `Lesson` (id, moduleId, title, order, content — nullable, populated when user expands it)
+
+5. **Save & view courses**
+   - After generation, let the user save the course (parses the AI's Markdown output into Course/Module/Lesson records, or store raw Markdown in a `content` field if structured parsing is too complex for v1).
+   - Dashboard page listing the user's saved courses.
+   - Course detail page showing modules/lessons, with a button per lesson to "Expand into full lesson" (calls a second AI generation for that lesson's full content: explanation, worked example, practice exercise + solution).
+
+6. **Auth**
+   - NextAuth.js, credentials or GitHub provider — gate the dashboard and save functionality behind login; course generation itself can be usable without login (rate-limited) or gated, your choice — default to allowing generation without login but requiring login to save.
+
+## Environment variables needed   OPENROUTER_API_KEY=
+DATABASE_URL=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=
+
+
+## Requirements
+- Never expose the OpenRouter API key client-side — all AI calls happen server-side in API routes.
+- Handle streaming errors gracefully (show a retry option if the stream fails).
+- Mobile-responsive layout.
+- Clean, modern UI — don't default to unstyled components; use a simple cohesive color scheme and good spacing.
+- Include a README with setup instructions (env vars, `npx prisma migrate dev`, `npm run dev`).
+
+Start by scaffolding the project structure and Prisma schema, then build the generation flow end-to-end before adding save/dashboard features.
